@@ -3,11 +3,11 @@ import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 abstract class AuthBase {
-  User? get currentUser;
   Stream<User?> authStateChanges();
-  Future<User?> signInAnonymously();
+  User? get currentUser;
   Future<User?> signInWithEmailAndPassword(String email, String password);
   Future<User?> createUserWithEmailAndPassword(String email, String password);
+  Future<User?> signInAnonymously();
   Future<User?> signInGoogle();
   Future<User?> signInFacebook();
   Future<void> signOut();
