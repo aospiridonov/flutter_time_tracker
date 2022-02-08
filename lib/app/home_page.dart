@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_time_tracker/services/auth.dart';
+import 'package:flutter_time_tracker/common_widgets/show_alert_dialog.dart';
+import 'package:flutter_time_tracker/services/auth_provider.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key, required this.auth}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
-  final AuthBase auth;
-
-  Future<void> _signOut() async {
+  Future<void> _signOut(BuildContext context) async {
     try {
+      final auth = AuthProvider.of(context);
       await auth.signOut();
     } catch (e) {
       if (kDebugMode) {
@@ -17,15 +17,28 @@ class HomePage extends StatelessWidget {
     }
   }
 
+  Future<void> _confirmSignOut(BuildContext context) async {
+    final didRequestSignOut = await showAlertDialog(
+      context,
+      title: 'Logout',
+      content: 'Are you sure that you want to logout?',
+      cancelActionText: 'Cancel',
+      defaultActionText: 'Logout',
+    );
+    if (didRequestSignOut != null && didRequestSignOut == true) {
+      _signOut(context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home Page'),
+        title: const Text('Home Page'),
         actions: [
           TextButton(
-            onPressed: _signOut,
-            child: Text(
+            onPressed: () => _confirmSignOut(context),
+            child: const Text(
               'Logout',
               style: TextStyle(
                 color: Colors.white,
