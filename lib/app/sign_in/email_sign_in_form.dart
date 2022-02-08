@@ -3,8 +3,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_time_tracker/app/sign_in/validators.dart';
 import 'package:flutter_time_tracker/common_widgets/form_submit_button.dart';
-import 'package:flutter_time_tracker/common_widgets/show_alert_dialog.dart';
-import 'package:flutter_time_tracker/services/auth_provider.dart';
+import 'package:flutter_time_tracker/common_widgets/show_exception_alert_dialog.dart';
+import 'package:flutter_time_tracker/services/auth.dart';
+import 'package:provider/provider.dart';
 
 enum EmailSignInFormType { signIn, register }
 
@@ -31,13 +32,22 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
 
   bool _isVisibilityPassword = false;
 
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
   void _submit() async {
     setState(() {
       _submitted = true;
       _isLoading = true;
     });
     try {
-      final auth = AuthProvider.of(context);
+      final auth = Provider.of<AuthBase>(context, listen: false);
       if (_formType == EmailSignInFormType.signIn) {
         await auth.signInWithEmailAndPassword(_email, _password);
       } else {
@@ -45,12 +55,10 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       }
       Navigator.of(context).pop();
     } on FirebaseAuthException catch (error) {
-      String errorMessage = error.message!;
-      showAlertDialog(
+      showExceptionAlertDialog(
         context,
         title: 'Sign in failed',
-        content: errorMessage,
-        defaultActionText: 'Ok',
+        exception: error,
       );
     } catch (e) {
       if (kDebugMode) {
