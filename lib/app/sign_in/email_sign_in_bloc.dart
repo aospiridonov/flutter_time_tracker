@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter_time_tracker/app/sign_in/sign_in_model.dart';
+import 'package:flutter_time_tracker/app/sign_in/email_sign_in_model.dart';
 import 'package:flutter_time_tracker/services/auth.dart';
 
 class EmailSignInBloc {
@@ -20,10 +20,7 @@ class EmailSignInBloc {
   }
 
   Future<void> submit() async {
-    updateWith(
-      submitted: true,
-      isLoading: true,
-    );
+    updateWith(submitted: true, isLoading: true);
 
     try {
       if (_model.formType == EmailSignInFormType.signIn) {
