@@ -8,7 +8,8 @@ import 'package:flutter_time_tracker/services/auth.dart';
 import 'package:provider/provider.dart';
 
 class EmailSignInFormBlocBased extends StatefulWidget {
-  EmailSignInFormBlocBased({Key? key, required this.bloc}) : super(key: key);
+  const EmailSignInFormBlocBased({Key? key, required this.bloc})
+      : super(key: key);
 
   final EmailSignInBloc bloc;
 
