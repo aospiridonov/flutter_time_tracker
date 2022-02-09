@@ -98,12 +98,12 @@ class _EmailSignInFormBlocBasedState extends State<EmailSignInFormBlocBased> {
         enabled: !model.isLoading,
         suffix: IconButton(
           onPressed: widget.bloc.toggleVisibilityPassword,
-          icon: Icon(model.isVisibilityPassword
-              ? Icons.visibility_off
-              : Icons.visibility),
+          icon: Icon(
+            model.isShowPassword ? Icons.visibility_off : Icons.visibility,
+          ),
         ),
       ),
-      obscureText: model.isVisibilityPassword,
+      obscureText: model.isShowPassword,
       textInputAction: TextInputAction.done,
       onChanged: widget.bloc.updatePassword,
       onEditingComplete: _submit,

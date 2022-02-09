@@ -9,7 +9,7 @@ class EmailSignInModel with EmailAndPasswordValidator {
     this.formType = EmailSignInFormType.signIn,
     this.isLoading = false,
     this.submitted = false,
-    this.isVisibilityPassword = false,
+    this.isShowPassword = false,
   });
 
   final String email;
@@ -17,7 +17,7 @@ class EmailSignInModel with EmailAndPasswordValidator {
   final EmailSignInFormType formType;
   final bool isLoading;
   final bool submitted;
-  final bool isVisibilityPassword;
+  final bool isShowPassword;
 
   String get primaryButtonText {
     return formType == EmailSignInFormType.signIn
@@ -53,7 +53,7 @@ class EmailSignInModel with EmailAndPasswordValidator {
     EmailSignInFormType? formType,
     bool? isLoading,
     bool? submitted,
-    bool? isVisibilityPassword,
+    bool? isShowPassword,
   }) {
     return EmailSignInModel(
         email: email ?? this.email,
@@ -61,7 +61,6 @@ class EmailSignInModel with EmailAndPasswordValidator {
         formType: formType ?? this.formType,
         isLoading: isLoading ?? this.isLoading,
         submitted: submitted ?? this.submitted,
-        isVisibilityPassword:
-            isVisibilityPassword ?? this.isVisibilityPassword);
+        isShowPassword: isShowPassword ?? this.isShowPassword);
   }
 }

@@ -61,7 +61,7 @@ class EmailSignInBloc {
   void updatePassword(String password) => updateWith(password: password);
 
   void toggleVisibilityPassword() => updateWith(
-        isVisibilityPassword: !_model.isVisibilityPassword,
+        isShowPassword: !_model.isShowPassword,
       );
 
   void updateWith(
@@ -70,14 +70,14 @@ class EmailSignInBloc {
       EmailSignInFormType? formType,
       bool? isLoading,
       bool? submitted,
-      bool? isVisibilityPassword}) {
+      bool? isShowPassword}) {
     _model = _model.copyWith(
       email: email,
       password: password,
       formType: formType,
       isLoading: isLoading,
       submitted: submitted,
-      isVisibilityPassword: isVisibilityPassword,
+      isShowPassword: isShowPassword,
     );
     _modelController.add(_model);
   }
