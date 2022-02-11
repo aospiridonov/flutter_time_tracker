@@ -31,12 +31,19 @@ class Auth implements AuthBase {
   @override
   Future<User?> signInWithEmailAndPassword(
       String email, String password) async {
-    final userCredential = await _firebaseAuth.signInWithCredential(
+    List<String> emailList =
+        await FirebaseAuth.instance.fetchSignInMethodsForEmail(email);
+
+    print(emailList);
+    final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    /*final userCredential = await _firebaseAuth.signInWithCredential(
       EmailAuthProvider.credential(
         email: email,
         password: password,
       ),
     );
+    */
     return userCredential.user;
   }
 
@@ -56,12 +63,19 @@ class Auth implements AuthBase {
     final googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       final googleAuth = await googleUser.authentication;
+
+      List<String> emailList = await FirebaseAuth.instance
+          .fetchSignInMethodsForEmail(googleUser.email);
+
+      print(emailList);
+
       if (googleAuth.idToken != null) {
         final userCredential = await _firebaseAuth
             .signInWithCredential(GoogleAuthProvider.credential(
           idToken: googleAuth.idToken,
           accessToken: googleAuth.accessToken,
         ));
+
         return userCredential.user;
       } else {
         throw FirebaseAuthException(
@@ -85,15 +99,33 @@ class Auth implements AuthBase {
         'public_profile',
       ],
     );
+    //final data = await FacebookAuth.instance.getUserData();
+    //print(data.toString());
 
     switch (result.status) {
       case LoginStatus.success:
-        final userCredential = await _firebaseAuth.signInWithCredential(
-          FacebookAuthProvider.credential(
-            result.accessToken!.token,
-          ),
-        );
-        return userCredential.user;
+        try {
+          final userCredential = await _firebaseAuth.signInWithCredential(
+            FacebookAuthProvider.credential(
+              result.accessToken!.token,
+            ),
+          );
+          return userCredential.user;
+        } on FirebaseAuthException catch (e) {
+          rethrow;
+          /*
+          if (e.code == 'account-exists-with-different-credential') {
+            List<String> emailList = await FirebaseAuth.instance
+                .fetchSignInMethodsForEmail(e.email!);
+            //_firebaseAuth
+            if (emailList.first == "google.com") {
+              return await signInGoogle();
+            }
+          }
+          */
+        }
+        break;
+
       case LoginStatus.cancelled:
         throw FirebaseAuthException(
           code: 'ERROR_ABORTED_BY_USER',
