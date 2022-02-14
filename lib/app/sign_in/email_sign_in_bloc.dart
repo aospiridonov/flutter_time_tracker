@@ -2,36 +2,37 @@ import 'dart:async';
 
 import 'package:flutter_time_tracker/app/sign_in/email_sign_in_model.dart';
 import 'package:flutter_time_tracker/services/auth.dart';
+import 'package:rxdart/rxdart.dart';
 
 class EmailSignInBloc {
   EmailSignInBloc({required this.auth});
 
   final AuthBase auth;
 
-  final StreamController<EmailSignInModel> _modelController =
-      StreamController<EmailSignInModel>();
+  final _modelSubject =
+      BehaviorSubject<EmailSignInModel>.seeded(EmailSignInModel());
 
-  Stream<EmailSignInModel> get modelStream => _modelController.stream;
+  Stream<EmailSignInModel> get modelStream => _modelSubject.stream;
 
-  EmailSignInModel _model = EmailSignInModel();
+  EmailSignInModel get model => _modelSubject.value;
 
   void dispose() {
-    _modelController.close();
+    _modelSubject.close();
   }
 
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
 
     try {
-      if (_model.formType == EmailSignInFormType.signIn) {
+      if (model.formType == EmailSignInFormType.signIn) {
         await auth.signInWithEmailAndPassword(
-          _model.email,
-          _model.password,
+          model.email,
+          model.password,
         );
       } else {
         await auth.createUserWithEmailAndPassword(
-          _model.email,
-          _model.password,
+          model.email,
+          model.password,
         );
       }
     } catch (_) {
@@ -41,7 +42,7 @@ class EmailSignInBloc {
   }
 
   void toggleFormType() {
-    final formType = _model.formType == EmailSignInFormType.signIn
+    final formType = model.formType == EmailSignInFormType.signIn
         ? EmailSignInFormType.register
         : EmailSignInFormType.signIn;
     updateWith(
@@ -58,7 +59,7 @@ class EmailSignInBloc {
   void updatePassword(String password) => updateWith(password: password);
 
   void toggleVisibilityPassword() => updateWith(
-        isShowPassword: !_model.isShowPassword,
+        isShowPassword: !model.isShowPassword,
       );
 
   void updateWith(
@@ -68,14 +69,13 @@ class EmailSignInBloc {
       bool? isLoading,
       bool? submitted,
       bool? isShowPassword}) {
-    _model = _model.copyWith(
+    _modelSubject.add(model.copyWith(
       email: email,
       password: password,
       formType: formType,
       isLoading: isLoading,
       submitted: submitted,
       isShowPassword: isShowPassword,
-    );
-    _modelController.add(_model);
+    ));
   }
 }
